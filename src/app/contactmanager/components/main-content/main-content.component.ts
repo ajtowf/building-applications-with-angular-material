@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -11,6 +11,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
+
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-main-content',
@@ -32,6 +34,7 @@ export class MainContentComponent implements OnInit {
   
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
+  users$ = toObservable(this.userService.users);
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
@@ -39,7 +42,7 @@ export class MainContentComponent implements OnInit {
       if (id == 0) id = 1;      
       this.user = null;
       
-      this.userService.users.subscribe(users => {
+      this.users$.subscribe(users => {
         // Simulate delay to show busy spinner.
         setTimeout(() => {
           this.user = this.userService.userById(id);

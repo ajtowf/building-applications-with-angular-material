@@ -39,12 +39,11 @@ export class SidenavComponent implements OnInit {
 
   public isScreenSmall: boolean = false;
 
-  users!: Observable<User[]>;
   isDarkTheme: boolean = false;
   dir: Direction = 'ltr';
 
   private breakpointObserver = inject(BreakpointObserver);
-  private userService = inject(UserService);
+  public userService = inject(UserService);
   private router = inject(Router);
 
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
@@ -64,7 +63,6 @@ export class SidenavComponent implements OnInit {
         this.isScreenSmall = state.matches;
       });
 
-    this.users = this.userService.users;
     this.userService.loadAll();
 
     this.router.events.subscribe(() => {

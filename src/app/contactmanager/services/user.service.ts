@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -8,25 +8,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class UserService {
 
-  private _users = new BehaviorSubject<User[]>([]);
-  private dataStore: { users: User[]; } = { users: [] };
+  users = signal<User[]>([]);
 
   http = inject(HttpClient);
 
-  get users(): Observable<User[]> {
-    return this._users.asObservable();
-  }
-
   addUser(user: User): User {
-    user.id = this.dataStore.users.length + 1;
-    this.dataStore.users.push(user);
-    this._users.next(this.dataStore.users);
-
+    user.id = this.users().length + 1;
+    this.users.update(u => [...u, user]);
     return user;
   }
 
   userById(id: number) {
-    return this.dataStore.users.find(x => x.id == id);
+    return this.users().find(x => x.id == id);
   }
 
   loadAll() {
@@ -34,12 +27,11 @@ export class UserService {
 
     return this.http.get<User[]>(usersUrl)
     .subscribe({
-      next: data => {        
-        this.dataStore.users = data;
-        this._users.next(this.dataStore.users);
+      next: data => {  
+        this.users.set(data);
       },
       error: error => console.log("Failed to fetch users")
-    })
+    });
   }
 
 }
