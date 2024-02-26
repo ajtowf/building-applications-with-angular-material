@@ -1,7 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { User } from '../models/user';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+
+import { User } from '../models/user';
+
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +14,15 @@ export class UserService {
 
   http = inject(HttpClient);
 
+  constructor() {
+    const usersUrl = '/assets/users.json'
+
+    this.http.get<User[]>(usersUrl)
+    .pipe(takeUntilDestroyed())
+    .subscribe(users => this.users.set(users));
+
+  }
+
   addUser(user: User): User {
     user.id = this.users().length + 1;
     this.users.update(u => [...u, user]);
@@ -20,18 +31,6 @@ export class UserService {
 
   userById(id: number) {
     return this.users().find(x => x.id == id);
-  }
-
-  loadAll() {
-    const usersUrl = '/assets/users.json'
-
-    return this.http.get<User[]>(usersUrl)
-    .subscribe({
-      next: data => {  
-        this.users.set(data);
-      },
-      error: error => console.log("Failed to fetch users")
-    });
   }
 
 }

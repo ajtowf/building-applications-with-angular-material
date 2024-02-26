@@ -37,13 +37,13 @@ const SMALL_WIDTH_BREAKPOINT = 720;
 })
 export class SidenavComponent implements OnInit {
 
-  public isScreenSmall: boolean = false;
+  protected isScreenSmall: boolean = false;
+  protected userService = inject(UserService);
 
-  isDarkTheme: boolean = false;
-  dir: Direction = 'ltr';
+  protected isDarkTheme: boolean = false;
+  protected dir: Direction = 'ltr';
 
   private breakpointObserver = inject(BreakpointObserver);
-  public userService = inject(UserService);
   private router = inject(Router);
 
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
@@ -62,8 +62,6 @@ export class SidenavComponent implements OnInit {
       .subscribe((state: BreakpointState) => {
         this.isScreenSmall = state.matches;
       });
-
-    this.userService.loadAll();
 
     this.router.events.subscribe(() => {
       if (this.isScreenSmall) {

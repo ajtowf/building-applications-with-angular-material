@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Signal, SimpleChanges, computed, inject, input, numberAttribute, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -12,7 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
-import { toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { delay, of } from 'rxjs';
 
 @Component({
     selector: 'app-main-content',
@@ -28,28 +29,20 @@ import { toObservable } from '@angular/core/rxjs-interop';
       NotesComponent
     ]
 })
-export class MainContentComponent implements OnInit {
+export class MainContentComponent implements OnChanges {
+  @Input({transform: numberAttribute}) id = 0;
 
-  user: User | null | undefined;
+  protected user: User | null | undefined;
   
-  private route = inject(ActivatedRoute);
   private userService = inject(UserService);
-  users$ = toObservable(this.userService.users);
+  private users$ = toObservable(this.userService.users).pipe(delay(500));
+  
+  ngOnChanges(changes: SimpleChanges) {
+    let userId = 1;
+    if (this.id) userId = this.id;
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      let id = Number(params.get('id'));
-      if (id == 0) id = 1;      
-      this.user = null;
-      
-      this.users$.subscribe(users => {
-        // Simulate delay to show busy spinner.
-        setTimeout(() => {
-          this.user = this.userService.userById(id);
-        }, 500)
-      });
-
-    })
+    this.user = null;
+    this.users$.subscribe(x => this.user = this.userService.userById(userId));
   }
 
 }

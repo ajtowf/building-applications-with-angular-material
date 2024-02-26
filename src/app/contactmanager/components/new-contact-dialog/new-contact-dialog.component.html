@@ -7,9 +7,11 @@
         <mat-select-trigger>
           <mat-icon svgIcon="{{user.avatar}}"></mat-icon> {{user.avatar}}
         </mat-select-trigger>
-        <mat-option *ngFor="let avatar of avatars" [value]="avatar">
-          <mat-icon svgIcon="{{avatar}}"></mat-icon> {{avatar}}
-        </mat-option>
+        @for (avatar of avatars; track avatar) {
+          <mat-option [value]="avatar">
+            <mat-icon svgIcon="{{avatar}}"></mat-icon> {{avatar}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <br>
@@ -17,7 +19,9 @@
     <mat-form-field appearance="fill">
       <mat-label>Name</mat-label>
       <input matInput [formControl]="name" required>
-      <mat-error *ngIf="name.invalid">{{getErrorMessage()}}</mat-error>
+      @if (name.invalid) {
+        <mat-error>{{getErrorMessage()}}</mat-error>
+      }
     </mat-form-field>
     <br>
 
