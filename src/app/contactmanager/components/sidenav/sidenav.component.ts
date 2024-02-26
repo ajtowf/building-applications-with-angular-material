@@ -12,10 +12,7 @@ import { Direction } from '@angular/cdk/bidi';
 
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 
-import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
-
-import { Observable } from 'rxjs';
 
 const SMALL_WIDTH_BREAKPOINT = 720;
 

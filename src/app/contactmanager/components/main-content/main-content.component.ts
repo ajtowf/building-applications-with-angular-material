@@ -1,7 +1,5 @@
-import { Component, Input, OnChanges, OnInit, Signal, SimpleChanges, computed, inject, input, numberAttribute, signal } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, inject, numberAttribute } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { NotesComponent } from '../notes/notes.component';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -12,8 +10,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
 
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { delay, of } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { delay } from 'rxjs';
 
 @Component({
     selector: 'app-main-content',
