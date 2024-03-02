@@ -12,10 +12,7 @@ import { Direction } from '@angular/cdk/bidi';
 
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 
-import { User } from '../../models/user';
 import { UserService } from '../../services/user.service';
-
-import { Observable } from 'rxjs';
 
 const SMALL_WIDTH_BREAKPOINT = 720;
 
@@ -37,14 +34,13 @@ const SMALL_WIDTH_BREAKPOINT = 720;
 })
 export class SidenavComponent implements OnInit {
 
-  public isScreenSmall: boolean = false;
+  protected isScreenSmall: boolean = false;
+  protected userService = inject(UserService);
 
-  users!: Observable<User[]>;
-  isDarkTheme: boolean = false;
-  dir: Direction = 'ltr';
+  protected isDarkTheme: boolean = false;
+  protected dir: Direction = 'ltr';
 
   private breakpointObserver = inject(BreakpointObserver);
-  private userService = inject(UserService);
   private router = inject(Router);
 
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
@@ -63,9 +59,6 @@ export class SidenavComponent implements OnInit {
       .subscribe((state: BreakpointState) => {
         this.isScreenSmall = state.matches;
       });
-
-    this.users = this.userService.users;
-    this.userService.loadAll();
 
     this.router.events.subscribe(() => {
       if (this.isScreenSmall) {
